@@ -1,0 +1,264 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="results-section">
+    <h2 class="results-header">Tarot Sentiment Reading for r/{{ results.subreddit }}</h2>
+    
+    <!-- Results Overview Box -->
+    <div class="results-meta">
+        <div class="results-meta-item">
+            <span class="results-meta-label">Subreddit:</span>
+            <span class="results-meta-value">r/{{ results.subreddit }}</span>
+        </div>
+        
+        {% if results.search_term %}
+        <div class="results-meta-item">
+            <span class="results-meta-label">Search Term:</span>
+            <span class="results-meta-value">"{{ results.search_term }}"</span>
+        </div>
+        {% endif %}
+        
+        <div class="results-meta-item">
+            <span class="results-meta-label">Posts Analyzed:</span>
+            <span class="results-meta-value">{{ results.post_count }}</span>
+        </div>
+        
+        <div class="results-meta-item">
+            <span class="results-meta-label">Analysis Time:</span>
+            <span class="results-meta-value">{{ results.timestamp }}</span>
+        </div>
+        
+        <div class="results-meta-item">
+            <span class="results-meta-label">Overall Sentiment:</span>
+            <span class="results-meta-value 
+                  {% if results.overall_sentiment.sentiment_category == 'positive' %}sentiment-positive
+                  {% elif results.overall_sentiment.sentiment_category == 'negative' %}sentiment-negative
+                  {% else %}sentiment-neutral{% endif %}">
+                {{ results.overall_sentiment.sentiment_category|title }}
+                ({{ results.overall_sentiment.compound }})
+            </span>
+        </div>
+    </div>
+    
+    <!-- Primary Tarot Cards - Three Card Spread -->
+    <h3 class="text-center mb-4">Your Tarot Reading</h3>
+    <div class="card-spread three-card-spread">
+        <!-- Card 1: Overall Sentiment -->
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <div class="tarot-card fortune-card" id="overall-card" onclick="flipCard('overall-card')">
+                    <div class="tarot-card-inner">
+                        <div class="tarot-card-front 
+                                {% if results.overall_sentiment.sentiment_category == 'positive' %}border-sentiment-positive
+                                {% elif results.overall_sentiment.sentiment_category == 'negative' %}border-sentiment-negative
+                                {% else %}border-sentiment-neutral{% endif %}">
+                            <h3 class="tarot-card-title">
+                                {% if results.overall_sentiment.sentiment_category == 'positive' %}
+                                    The Lucky Charm
+                                {% elif results.overall_sentiment.sentiment_category == 'negative' %}
+                                    The Empty Pot
+                                {% else %}
+                                    The Rainbow's End
+                                {% endif %}
+                            </h3>
+                            <div class="tarot-card-body">
+                                <div class="tarot-card-symbol 
+                                    {% if results.overall_sentiment.sentiment_category == 'positive' %}sentiment-positive
+                                    {% elif results.overall_sentiment.sentiment_category == 'negative' %}sentiment-negative
+                                    {% else %}sentiment-neutral{% endif %}">
+                                    {% if results.overall_sentiment.sentiment_category == 'positive' %}
+                                        ☀️
+                                    {% elif results.overall_sentiment.sentiment_category == 'negative' %}
+                                        ☾
+                                    {% else %}
+                                        ⚖️
+                                    {% endif %}
+                                </div>
+                                <div class="tarot-card-value 
+                                    {% if results.overall_sentiment.sentiment_category == 'positive' %}sentiment-positive
+                                    {% elif results.overall_sentiment.sentiment_category == 'negative' %}sentiment-negative
+                                    {% else %}sentiment-neutral{% endif %}">
+                                    {{ results.overall_sentiment.compound|round(2) }}
+                                </div>
+                                <p class="tarot-card-description">
+                                    {% if results.overall_sentiment.sentiment_category == 'positive' %}
+                                        Overall energy is positive and enlightening.
+                                    {% elif results.overall_sentiment.sentiment_category == 'negative' %}
+                                        Challenging energies prevail in this realm.
+                                    {% else %}
+                                        A balanced state between light and shadow.
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="tarot-card-back">
+                            <div class="p-3 h-100 d-flex flex-column justify-content-between">
+                                <div>
+                                    <h4 class="text-gold mb-3">Overall Sentiment</h4>
+                                    <p><small>This represents the collective energy of the entire subreddit based on analyzed posts.</small></p>
+                                </div>
+                                <div class="mt-auto">
+                                    <div class="mb-1"><small>Positive: {{ results.overall_sentiment.pos|round(2) }}</small></div>
+                                    <div class="mb-1"><small>Neutral: {{ results.overall_sentiment.neu|round(2) }}</small></div>
+                                    <div class="mb-1"><small>Negative: {{ results.overall_sentiment.neg|round(2) }}</small></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Fortune Text will be added here by JavaScript -->
+    
+    <!-- Charts Section -->
+    <div class="results-charts">
+        <div class="row">
+            <!-- Sentiment Distribution Chart -->
+            <div class="col-md-6 mb-4">
+                <div class="chart-container">
+                    <h3 class="chart-title">Sentiment Distribution</h3>
+                    <div style="position: relative; height: 300px;">
+                        <canvas id="sentiment-distribution-chart" 
+                                data-positive="{{ results.sentiment_distribution.positive }}"
+                                data-neutral="{{ results.sentiment_distribution.neutral }}"
+                                data-negative="{{ results.sentiment_distribution.negative }}">
+                        </canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sentiment Compound Values Chart -->
+            <div class="col-md-6 mb-4">
+                <div class="chart-container">
+                    <h3 class="chart-title">Sentiment Analysis by Post</h3>
+                    <div style="position: relative; height: 300px;">
+                        <canvas id="sentiment-compound-chart" 
+                                data-compounds="{{ results.compounds|default([])|tojson }}"
+                                data-titles="{{ results.titles|default([])|tojson }}">
+                        </canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Export Button -->
+    <div class="text-center mb-5">
+        <button class="btn-tarot btn-export" onclick="exportResults()">
+            <i class="fas fa-file-download me-2"></i>Export Analysis
+        </button>
+    </div>
+    
+    <!-- Tarot Card Grid for Individual Posts -->
+    <h3 class="results-header mb-4">Individual Post Readings</h3>
+    
+    <div class="tarot-card-grid">
+        {% for post in results.posts %}
+        <div class="tarot-card" id="post-card-{{ post.id }}" onclick="flipCard('post-card-{{ post.id }}')">
+            <div class="tarot-card-inner">
+                <div class="tarot-card-front leprechaun-card
+                        {% if post.sentiment.sentiment_category == 'positive' %}border-sentiment-positive
+                        {% elif post.sentiment.sentiment_category == 'negative' %}border-sentiment-negative
+                        {% else %}border-sentiment-neutral{% endif %}">
+                    <img src="{{ url_for('static', filename='images/leprechaun_card.jpg') }}" alt="Lucky the Leprechaun" class="leprechaun-card-img">
+                    <div class="tarot-card-overlay">
+                        <h3 class="tarot-card-title">
+                            {% if post.sentiment.sentiment_category == 'positive' %}
+                                The Joy
+                            {% elif post.sentiment.sentiment_category == 'negative' %}
+                                The Shadow
+                            {% else %}
+                                The Neutrality
+                            {% endif %}
+                        </h3>
+                        <div class="tarot-card-body">
+                            <div class="tarot-card-value
+                                {% if post.sentiment.sentiment_category == 'positive' %}sentiment-positive
+                                {% elif post.sentiment.sentiment_category == 'negative' %}sentiment-negative
+                                {% else %}sentiment-neutral{% endif %}">
+                                {{ post.sentiment.compound|round(2) }}
+                            </div>
+                            <p class="tarot-card-description">
+                                {{ post.title|truncate(60) }}
+                            </p>
+                            <small class="mt-2 text-muted">Click to see details</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="tarot-card-back leprechaun-card">
+                    <img src="{{ url_for('static', filename='images/leprechaun_card.jpg') }}" alt="Lucky the Leprechaun" class="leprechaun-card-img">
+                    <div class="tarot-card-overlay p-3 h-100 d-flex flex-column justify-content-between">
+                        <div>
+                            <h4 class="text-gold mb-3">Post Details</h4>
+                            <p><small>{{ post.title }}</small></p>
+                            <div class="mt-3">
+                                <div class="mb-1"><small>Score: {{ post.score }}</small></div>
+                                <div class="mb-1"><small>Comments: {{ post.num_comments }}</small></div>
+                                <div class="mb-1"><small>Date: {{ post.created_utc }}</small></div>
+                            </div>
+                        </div>
+                        <div class="mt-auto">
+                            <div class="mb-1"><small>Positive: {{ post.sentiment.pos }}</small></div>
+                            <div class="mb-1"><small>Neutral: {{ post.sentiment.neu }}</small></div>
+                            <div class="mb-1"><small>Negative: {{ post.sentiment.neg }}</small></div>
+                            <a href="https://reddit.com{{ post.permalink }}" target="_blank" class="btn btn-sm btn-outline-warning mt-2">
+                                View on Reddit
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Detailed Results Table -->
+    <div class="mt-5">
+        <h3 class="results-header mb-4">Detailed Sentiment Readings</h3>
+        
+        <div class="table-responsive">
+            <table class="tarot-table">
+                <thead>
+                    <tr>
+                        <th>Post Title</th>
+                        <th>Date</th>
+                        <th>Score</th>
+                        <th>Comments</th>
+                        <th>Sentiment</th>
+                        <th>Link</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for post in results.posts %}
+                    <tr>
+                        <td>{{ post.title|truncate(50) }}</td>
+                        <td>{{ post.created_utc }}</td>
+                        <td>{{ post.score }}</td>
+                        <td>{{ post.num_comments }}</td>
+                        <td class="{% if post.sentiment.sentiment_category == 'positive' %}sentiment-positive
+                                   {% elif post.sentiment.sentiment_category == 'negative' %}sentiment-negative
+                                   {% else %}sentiment-neutral{% endif %}">
+                            {{ post.sentiment.sentiment_category|title }} ({{ post.sentiment.compound|round(2) }})
+                        </td>
+                        <td>
+                            <a href="https://reddit.com{{ post.permalink }}" target="_blank">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Back to Form Button -->
+    <div class="text-center mt-5">
+        <a href="{{ url_for('index') }}" class="btn-tarot">
+            <i class="fas fa-redo me-2"></i>New Reading
+        </a>
+    </div>
+</div>
+{% endblock %}

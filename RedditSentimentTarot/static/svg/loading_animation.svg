@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 320" width="200" height="320">
+  <!-- Loading Animation for Tarot Card -->
+  
+  <!-- Card Background -->
+  <rect x="10" y="10" width="180" height="300" rx="10" ry="10" fill="#2a2520" stroke="#c6a859" stroke-width="3">
+    <!-- Pulsating animation for the card border -->
+    <animate attributeName="stroke-opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite" />
+  </rect>
+  
+  <!-- Inner Border -->
+  <rect x="20" y="20" width="160" height="280" rx="5" ry="5" fill="none" stroke="#c6a859" stroke-width="1" stroke-dasharray="5,5">
+    <!-- Rotating dasharray animation -->
+    <animate attributeName="stroke-dashoffset" from="0" to="20" dur="1s" repeatCount="indefinite" />
+  </rect>
+  
+  <!-- Center Circle -->
+  <circle cx="100" cy="160" r="50" fill="none" stroke="#c6a859" stroke-width="2">
+    <!-- Pulsating animation for the circle -->
+    <animate attributeName="r" values="50;45;50" dur="2s" repeatCount="indefinite" />
+    <animate attributeName="stroke-width" values="2;3;2" dur="2s" repeatCount="indefinite" />
+  </circle>
+  
+  <!-- Inner Circle -->
+  <circle cx="100" cy="160" r="30" fill="none" stroke="#c6a859" stroke-width="1.5">
+    <!-- Opposite pulsating animation -->
+    <animate attributeName="r" values="30;35;30" dur="2s" repeatCount="indefinite" />
+  </circle>
+  
+  <!-- Spinning Star -->
+  <g>
+    <path d="M100,110 L110,150 L150,160 L110,170 L100,210 L90,170 L50,160 L90,150 Z" fill="none" stroke="#c6a859" stroke-width="1.5">
+      <!-- Rotation animation for the star -->
+      <animateTransform attributeName="transform" type="rotate" from="0 100 160" to="360 100 160" dur="6s" repeatCount="indefinite" />
+    </path>
+  </g>
+  
+  <!-- Loading Dots -->
+  <circle cx="80" cy="240" r="5" fill="#c6a859">
+    <animate attributeName="opacity" values="0;1;0" dur="1.5s" repeatCount="indefinite" begin="0s" />
+  </circle>
+  <circle cx="100" cy="240" r="5" fill="#c6a859">
+    <animate attributeName="opacity" values="0;1;0" dur="1.5s" repeatCount="indefinite" begin="0.3s" />
+  </circle>
+  <circle cx="120" cy="240" r="5" fill="#c6a859">
+    <animate attributeName="opacity" values="0;1;0" dur="1.5s" repeatCount="indefinite" begin="0.6s" />
+  </circle>
+  
+  <!-- Moon and Sun Symbols that alternate -->
+  <g>
+    <text x="100" y="70" font-family="serif" font-size="24" fill="#c6a859" text-anchor="middle">☽</text>
+    <animate attributeName="opacity" values="1;0;1" dur="4s" repeatCount="indefinite" />
+  </g>
+  <g>
+    <text x="100" y="70" font-family="serif" font-size="24" fill="#c6a859" text-anchor="middle">☉</text>
+    <animate attributeName="opacity" values="0;1;0" dur="4s" repeatCount="indefinite" />
+  </g>
+  
+  <!-- Decorative Corner Elements -->
+  <!-- Top Left -->
+  <path d="M30,40 L40,40 M30,40 L30,50" stroke="#c6a859" stroke-width="1.5" />
+  <!-- Top Right -->
+  <path d="M170,40 L160,40 M170,40 L170,50" stroke="#c6a859" stroke-width="1.5" />
+  <!-- Bottom Left -->
+  <path d="M30,280 L40,280 M30,280 L30,270" stroke="#c6a859" stroke-width="1.5" />
+  <!-- Bottom Right -->
+  <path d="M170,280 L160,280 M170,280 L170,270" stroke="#c6a859" stroke-width="1.5" />
+</svg>

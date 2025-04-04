@@ -1,0 +1,159 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="tarot-form">
+            <h2 class="text-center text-gold mb-4">Reddit Luck O' The Irish Analysis</h2>
+            
+            <p class="text-center mb-4">
+                Enter a subreddit and optional search term to discover the fortune and sentiment through the lucky lens of Irish wisdom.
+            </p>
+            
+            <form id="analysis-form" action="{{ url_for('analyze') }}" method="post">
+                <div class="form-group">
+                    <label for="subreddit" class="form-label">Subreddit</label>
+                    <div class="input-group">
+                        <span class="input-group-text" style="background-color: rgba(0, 0, 0, 0.2); border-color: #c6a859; color: #c6a859;">r/</span>
+                        <input type="text" class="form-control" id="subreddit" name="subreddit" required 
+                               placeholder="Enter subreddit name (without r/)" aria-describedby="subredditHelp">
+                    </div>
+                    <small id="subredditHelp" class="form-text text-muted">Example: worldnews, askreddit, science</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="search_term" class="form-label">Search Term (Optional)</label>
+                    <input type="text" class="form-control" id="search_term" name="search_term" 
+                           placeholder="Enter search term or leave blank" aria-describedby="searchHelp">
+                    <small id="searchHelp" class="form-text text-muted">Narrow results with a specific search term</small>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="post_limit" class="form-label">Number of Posts</label>
+                            <select class="form-select" id="post_limit" name="post_limit">
+                                <option value="5">5 posts</option>
+                                <option value="10" selected>10 posts</option>
+                                <option value="25">25 posts</option>
+                                <option value="50">50 posts</option>
+                                <option value="100">100 posts</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="time_filter" class="form-label">Time Period</label>
+                            <select class="form-select" id="time_filter" name="time_filter">
+                                <option value="day">Past Day</option>
+                                <option value="week" selected>Past Week</option>
+                                <option value="month">Past Month</option>
+                                <option value="year">Past Year</option>
+                                <option value="all">All Time</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn-tarot">
+                        <i class="fas fa-magic me-2"></i>Reveal Sentiment
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Information Cards -->
+        <div class="row mt-5">
+            <div class="col-md-4 mb-4">
+                <div class="tarot-card">
+                    <div class="tarot-card-inner">
+                        <div class="tarot-card-front">
+                            <h3 class="tarot-card-title">The Reader</h3>
+                            <div class="tarot-card-body">
+                                <div class="tarot-card-symbol">🔮</div>
+                                <p class="tarot-card-description">
+                                    Analyzes Reddit content to reveal hidden sentiments and emotional tones.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="tarot-card-back"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="tarot-card">
+                    <div class="tarot-card-inner">
+                        <div class="tarot-card-front">
+                            <h3 class="tarot-card-title">The Method</h3>
+                            <div class="tarot-card-body">
+                                <div class="tarot-card-symbol">⚖️</div>
+                                <p class="tarot-card-description">
+                                    Uses NLTK and TextBlob to balance positive, negative, and neutral energies.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="tarot-card-back"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="tarot-card">
+                    <div class="tarot-card-inner">
+                        <div class="tarot-card-front">
+                            <h3 class="tarot-card-title">The Fortune</h3>
+                            <div class="tarot-card-body">
+                                <div class="tarot-card-symbol">📊</div>
+                                <p class="tarot-card-description">
+                                    Reveals insights through tarot-inspired visualizations of sentiment patterns.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="tarot-card-back"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="ornate-divider"></div>
+        
+        <!-- How It Works Section -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <h2 class="text-center text-gold mb-4">How The Mystic Analysis Works</h2>
+                
+                <div class="tarot-form p-4">
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-4">
+                            <div style="font-size: 2.5rem; color: #c6a859; margin-bottom: 15px;">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <h4 class="text-gold">Gather</h4>
+                            <p>The mystical process begins by gathering posts from your chosen subreddit using Reddit's API.</p>
+                        </div>
+                        
+                        <div class="col-md-4 text-center mb-4">
+                            <div style="font-size: 2.5rem; color: #c6a859; margin-bottom: 15px;">
+                                <i class="fas fa-magic"></i>
+                            </div>
+                            <h4 class="text-gold">Analyze</h4>
+                            <p>Python's enchanted NLP libraries reveal the emotional auras hidden within each post's text.</p>
+                        </div>
+                        
+                        <div class="col-md-4 text-center mb-4">
+                            <div style="font-size: 2.5rem; color: #c6a859; margin-bottom: 15px;">
+                                <i class="fas fa-tarot-card"></i>
+                            </div>
+                            <h4 class="text-gold">Reveal</h4>
+                            <p>The sentiment patterns are translated into mystical tarot-inspired visualizations.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
